@@ -2,10 +2,11 @@ import random
 import os
 
 ROWS = 15
-COLS = 25
+COLS = 55
 
 WALL = '█'
 EMPTY = ' '
+EXIT = 'E'
 
 maze = []
 
@@ -14,6 +15,23 @@ def draw_maze():
     os.system('cls')
     for row in maze:
         print(*row, sep='')
+
+
+def check_maze():
+    for row_idx, row in enumerate(maze):
+        for col_idx, col in enumerate(row):
+            if row_idx % 2 == 0 and col_idx % 2 == 0:
+                if col == WALL:
+                    return False
+    return True
+
+
+def make_frame():
+    maze.insert(0, [WALL] * (COLS))
+    maze.append([WALL] * (COLS))
+    for row in maze:
+        row.insert(0, WALL)
+        row.append(WALL)
 
 
 for row_idx in range(ROWS):
@@ -27,13 +45,13 @@ bulldozer_row = random.choice(range(0, ROWS, 2))
 
 maze[bulldozer_row][bulldozer_col] = 'a'
 
-for i in range(100000):  # остановить цикл когда сломаны все четные
+while not check_maze():  # остановить цикл когда сломаны все четные
     bulldozer_direction = []
-    if bulldozer_col + 2 < COLS:
+    if bulldozer_col + 2 <= COLS:
         bulldozer_direction.append('right')
     if bulldozer_col - 2 >= 0:
         bulldozer_direction.append('left')
-    if bulldozer_row + 2 < ROWS:
+    if bulldozer_row + 2 <= ROWS:
         bulldozer_direction.append('down')
     if bulldozer_row - 2 >= 0:
         bulldozer_direction.append('up')
@@ -64,4 +82,10 @@ for i in range(100000):  # остановить цикл когда сломан
             maze[bulldozer_row + 2][bulldozer_col] = EMPTY
         bulldozer_row += 2
 
+    # print(check_maze())
+
+
+make_frame()
+
+maze[0][COLS] = EXIT
 draw_maze()
